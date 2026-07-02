@@ -122,7 +122,7 @@ function TripCard({ trip, onRefresh }) {
   const activities = sortActivities(trip.activities || []);
 
   return (
-    <li style={{ padding: '15px', border: '1px solid #ddd', marginBottom: '15px', borderRadius: '5px' }}>
+    <li style={{ padding: '15px', border: '1px solid #ddd', marginBottom: '15px', borderRadius: '8px', background: '#f3f4f6' }}>
       {isEditingTrip ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
           <input
