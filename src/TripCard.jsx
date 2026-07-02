@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from './api';
 
 const TIP_LABELS = {
   obiectiv: 'Obiectiv turistic',
@@ -32,7 +32,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleDeleteTrip = async () => {
     try {
-      await axios.delete(`http://localhost/api/trips/${trip.id}`);
+      await api.delete(`/trips/${trip.id}`);
       onRefresh();
     } catch (error) {
       console.error('Eroare la stergerea calatoriei:', error);
@@ -41,7 +41,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleSaveTrip = async () => {
     try {
-      await axios.put(`http://localhost/api/trips/${trip.id}`, {
+      await api.put(`/trips/${trip.id}`, {
         numit_destinatie: editDestination,
         data_inceput: editStart || null,
         data_sfarsit: editEnd || null,
@@ -58,7 +58,7 @@ function TripCard({ trip, onRefresh }) {
     if (!newTitle) return;
 
     try {
-      await axios.post(`http://localhost/api/trips/${trip.id}/activities`, {
+      await api.post(`/trips/${trip.id}/activities`, {
         titlu_activitate: newTitle,
         tip: newTip,
         descriere: newDescriere || null,
@@ -76,7 +76,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleToggleBifat = async (activity) => {
     try {
-      await axios.put(`http://localhost/api/activities/${activity.id}`, {
+      await api.put(`/activities/${activity.id}`, {
         bifat: !activity.bifat,
       });
       onRefresh();
@@ -97,7 +97,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleSaveActivity = async (activityId) => {
     try {
-      await axios.put(`http://localhost/api/activities/${activityId}`, {
+      await api.put(`/activities/${activityId}`, {
         titlu_activitate: editActivity.titlu_activitate,
         tip: editActivity.tip,
         descriere: editActivity.descriere || null,
@@ -112,7 +112,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleDeleteActivity = async (activityId) => {
     try {
-      await axios.delete(`http://localhost/api/activities/${activityId}`);
+      await api.delete(`/activities/${activityId}`);
       onRefresh();
     } catch (error) {
       console.error('Eroare la stergerea activitatii:', error);
