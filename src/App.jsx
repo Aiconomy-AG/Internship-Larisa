@@ -1,38 +1,34 @@
 import { useState, useEffect } from 'react';
-import api from './api';
+import axios from 'axios';
 import TripCard from './TripCard';
-import './App.css';
 
 function App() {
   const [trips, setTrips] = useState([]);
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [search, setSearch] = useState('');
 
   const fetchTrips = async () => {
     try {
-      const response = await api.get('/trips');
+      const response = await axios.get('http://localhost/api/trips');
       setTrips(response.data);
     } catch (error) {
       console.error("Eroare la incarcarea calatoriilor:", error);
     }
   };
 
+  //incarcam calatoriile din backend cand se deschide pagina
   useEffect(() => {
     fetchTrips();
   }, []);
 
-  const filteredTrips = trips.filter((trip) =>
-      trip.numit_destinatie.toLowerCase().includes(search.toLowerCase())
-  );
-
+  //trimit calatorie noua in baza de date
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!destination) return;
 
     try {
-      await api.post('/trips', {
+      await axios.post('http://localhost/api/trips', {
         numit_destinatie: destination,
         data_inceput: startDate || null,
         data_sfarsit: endDate || null
@@ -51,6 +47,7 @@ function App() {
       <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto' }}>
         <h1>✈️ Planificator de Calatorii</h1>
 
+        {/* Formular Adaugare */}
         <form onSubmit={handleSubmit} style={{ marginBottom: '30px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <input
               type="text"
@@ -78,20 +75,11 @@ function App() {
           </button>
         </form>
 
-        <input
-            type="text"
-            placeholder="🔍 Cauta o destinatie..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', marginBottom: '20px' }}
-        />
-
-        <h2>Vacantele mele:</h2>
-        {filteredTrips.length === 0 ? (
-            <p>{trips.length === 0 ? 'Nu ai adaugat nicio calatorie inca.' : 'Nicio calatorie nu corespunde cautarii.'}</p>
-        ) : (
+        {/* lista calatorii */}
+        <h2>Vacanțele mele:</h2>
+        {trips.length === 0 ? <p>Nu ai adaugat nicio calatorie inca.</p> : (
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              {filteredTrips.map((trip) => (
+              {trips.map((trip) => (
                   <TripCard key={trip.id} trip={trip} onRefresh={fetchTrips} />
               ))}
             </ul>

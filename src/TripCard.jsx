@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from './api';
+import axios from 'axios';
 
 const TIP_LABELS = {
   obiectiv: '🏛️ Obiectiv turistic',
@@ -32,16 +32,16 @@ function TripCard({ trip, onRefresh }) {
 
   const handleDeleteTrip = async () => {
     try {
-      await api.delete(`/trips/${trip.id}`);
+      await axios.delete(`http://localhost/api/trips/${trip.id}`);
       onRefresh();
     } catch (error) {
-      console.error('Eroare la stergerea calatoriei:', error);
+      console.error('Eroare la ștergerea calatoriei:', error);
     }
   };
 
   const handleSaveTrip = async () => {
     try {
-      await api.put(`/trips/${trip.id}`, {
+      await axios.put(`http://localhost/api/trips/${trip.id}`, {
         numit_destinatie: editDestination,
         data_inceput: editStart || null,
         data_sfarsit: editEnd || null,
@@ -58,7 +58,7 @@ function TripCard({ trip, onRefresh }) {
     if (!newTitle) return;
 
     try {
-      await api.post(`/trips/${trip.id}/activities`, {
+      await axios.post(`http://localhost/api/trips/${trip.id}/activities`, {
         titlu_activitate: newTitle,
         tip: newTip,
         descriere: newDescriere || null,
@@ -76,7 +76,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleToggleBifat = async (activity) => {
     try {
-      await api.put(`/activities/${activity.id}`, {
+      await axios.put(`http://localhost/api/activities/${activity.id}`, {
         bifat: !activity.bifat,
       });
       onRefresh();
@@ -97,7 +97,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleSaveActivity = async (activityId) => {
     try {
-      await api.put(`/activities/${activityId}`, {
+      await axios.put(`http://localhost/api/activities/${activityId}`, {
         titlu_activitate: editActivity.titlu_activitate,
         tip: editActivity.tip,
         descriere: editActivity.descriere || null,
@@ -112,7 +112,7 @@ function TripCard({ trip, onRefresh }) {
 
   const handleDeleteActivity = async (activityId) => {
     try {
-      await api.delete(`/activities/${activityId}`);
+      await axios.delete(`http://localhost/api/activities/${activityId}`);
       onRefresh();
     } catch (error) {
       console.error('Eroare la stergerea activitatii:', error);
@@ -137,10 +137,10 @@ function TripCard({ trip, onRefresh }) {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={handleSaveTrip} style={{ padding: '8px', background: '#28A745', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-              Salveaza
+              Salvează
             </button>
             <button onClick={() => setIsEditingTrip(false)} style={{ padding: '8px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-              Anuleaza
+              Anulează
             </button>
           </div>
         </div>
@@ -152,27 +152,25 @@ function TripCard({ trip, onRefresh }) {
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={() => setIsEditingTrip(true)} style={{ background: '#007BFF', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>
-              Editeaza
+              Editează
             </button>
             <button onClick={handleDeleteTrip} style={{ background: '#DC3545', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>
-              Sterge
+              Șterge
             </button>
           </div>
         </div>
       )}
 
+      {/* lista de activitati / plan pe zi */}
       <div style={{ borderTop: '1px solid #eee', paddingTop: '10px' }}>
         {activities.length === 0 ? (
-          <p style={{ fontSize: '14px', color: '#999' }}>Nicio activitate planificata inca.</p>
+          <p style={{ fontSize: '14px', color: '#999' }}>Nicio activitate planificată încă.</p>
         ) : (
-          <ul className="activity-list">
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {activities.map((activity) => (
-              <li
-                key={activity.id}
-                className={`activity-item activity-item--${activity.tip || 'altele'}${activity.bifat ? ' done' : ''}`}
-              >
+              <li key={activity.id} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
                 {editingActivityId === activity.id ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <input
                       type="text"
                       value={editActivity.titlu_activitate}
@@ -197,49 +195,51 @@ function TripCard({ trip, onRefresh }) {
                       />
                     </div>
                     <textarea
-                      placeholder="Detalii (adresa, recomandari, rezervare...)"
+                      placeholder="Detalii (adresă, recomandări, rezervare...)"
                       value={editActivity.descriere}
                       onChange={(e) => setEditActivity({ ...editActivity, descriere: e.target.value })}
                       style={{ padding: '6px', fontFamily: 'inherit' }}
                     />
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={() => handleSaveActivity(activity.id)} style={{ padding: '6px', background: '#28A745', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-                        Salveaza
+                        Salvează
                       </button>
                       <button onClick={() => setEditingActivityId(null)} style={{ padding: '6px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-                        Anuleaza
+                        Anulează
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <div className="activity-main">
-                      <input
-                        type="checkbox"
-                        className="activity-checkbox"
-                        checked={!!activity.bifat}
-                        onChange={() => handleToggleBifat(activity)}
-                      />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                      <input type="checkbox" checked={!!activity.bifat} onChange={() => handleToggleBifat(activity)} style={{ marginTop: '4px' }} />
                       <div>
-                        <div>
-                          <span className="activity-time">{activity.ora ? `⏰ ${activity.ora.slice(0, 5)}` : '🕒 Oricand'}</span>
-                          <span className={`activity-title${activity.bifat ? ' done' : ''}`}>{activity.titlu_activitate}</span>
-                          <span className={`activity-badge activity-badge--${activity.tip || 'altele'}`}>{TIP_LABELS[activity.tip] || TIP_LABELS.altele}</span>
+                        <div style={{ textDecoration: activity.bifat ? 'line-through' : 'none', color: activity.bifat ? '#999' : '#c3d39d' }}>
+                          <span style={{ fontSize: '13px', color: '#666', marginRight: '6px' }}>
+                            {activity.ora ? `⏰ ${activity.ora.slice(0, 5)}` : '🕒 Oricând'}
+                          </span>
+                          <strong>{activity.titlu_activitate}</strong>
+                          <span style={{ fontSize: '12px', color: '#888', marginLeft: '6px' }}>{TIP_LABELS[activity.tip] || TIP_LABELS.altele}</span>
                         </div>
-                        {activity.descriere && <p className="activity-desc">{activity.descriere}</p>}
+                        {activity.descriere && <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#666' }}>{activity.descriere}</p>}
                       </div>
                     </div>
-                    <div className="activity-actions">
-                      <button onClick={() => startEditActivity(activity)}>✏️</button>
-                      <button onClick={() => handleDeleteActivity(activity.id)}>🗑️</button>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button onClick={() => startEditActivity(activity)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}>
+                        ✏️
+                      </button>
+                      <button onClick={() => handleDeleteActivity(activity.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}>
+                        🗑️
+                      </button>
                     </div>
-                  </>
+                  </div>
                 )}
               </li>
             ))}
           </ul>
         )}
 
+        {/* formular adaugare activitate noua */}
         <form onSubmit={handleAddActivity} style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
           <input
             type="text"
@@ -254,7 +254,7 @@ function TripCard({ trip, onRefresh }) {
               <option value="gastronomie">🍽️ Gastronomie</option>
               <option value="altele">📌 Altele</option>
             </select>
-            <input type="time" value={newOra} onChange={(e) => setNewOra(e.target.value)} style={{ padding: '6px' }} title="Lasa gol pentru program flexibil" />
+            <input type="time" value={newOra} onChange={(e) => setNewOra(e.target.value)} style={{ padding: '6px' }} title="Lasă gol pentru program flexibil" />
           </div>
           <textarea
             placeholder="Detalii (adresa, recomandari, rezervare...) - optional"
@@ -263,7 +263,7 @@ function TripCard({ trip, onRefresh }) {
             style={{ padding: '6px', fontFamily: 'inherit' }}
           />
           <button type="submit" style={{ padding: '8px', background: '#007BFF', color: 'white', border: 'none', cursor: 'pointer' }}>
-            + Adauga in plan
+            + Adaugă în plan
           </button>
         </form>
       </div>
