@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api';
 import TripCard from './TripCard';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
 
   const fetchTrips = async () => {
     try {
-      const response = await axios.get('http://localhost/api/trips');
+      const response = await api.get('/trips');
       setTrips(response.data);
     } catch (error) {
       console.error("Eroare la incarcarea calatoriilor:", error);
@@ -28,7 +28,7 @@ function App() {
     if (!destination) return;
 
     try {
-      await axios.post('http://localhost/api/trips', {
+      await api.post('/trips', {
         numit_destinatie: destination,
         data_inceput: startDate || null,
         data_sfarsit: endDate || null
