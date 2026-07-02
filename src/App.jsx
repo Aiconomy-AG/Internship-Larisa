@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from './api';
 import TripCard from './TripCard';
+import HotelSearch from './HotelSearch';
 import './App.css';
 
 function App() {
@@ -96,6 +97,8 @@ function App() {
               ))}
             </ul>
         )}
+
+        <HotelSearch />
       </div>
   );
 }
