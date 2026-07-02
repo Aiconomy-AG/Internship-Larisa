@@ -35,7 +35,7 @@ function TripCard({ trip, onRefresh }) {
       await api.delete(`/trips/${trip.id}`);
       onRefresh();
     } catch (error) {
-      console.error('Eroare la ștergerea calatoriei:', error);
+      console.error('Eroare la stergerea calatoriei:', error);
     }
   };
 
@@ -137,10 +137,10 @@ function TripCard({ trip, onRefresh }) {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={handleSaveTrip} style={{ padding: '8px', background: '#28A745', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-              Salvează
+              Salveaza
             </button>
             <button onClick={() => setIsEditingTrip(false)} style={{ padding: '8px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-              Anulează
+              Anuleaza
             </button>
           </div>
         </div>
@@ -152,25 +152,27 @@ function TripCard({ trip, onRefresh }) {
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={() => setIsEditingTrip(true)} style={{ background: '#007BFF', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>
-              Editează
+              Editeaza
             </button>
             <button onClick={handleDeleteTrip} style={{ background: '#DC3545', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>
-              Șterge
+              Sterge
             </button>
           </div>
         </div>
       )}
 
-      {/* lista de activitati / plan pe zi */}
       <div style={{ borderTop: '1px solid #eee', paddingTop: '10px' }}>
         {activities.length === 0 ? (
-          <p style={{ fontSize: '14px', color: '#999' }}>Nicio activitate planificată încă.</p>
+          <p style={{ fontSize: '14px', color: '#999' }}>Nicio activitate planificata inca.</p>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          <ul className="activity-list">
             {activities.map((activity) => (
-              <li key={activity.id} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
+              <li
+                key={activity.id}
+                className={`activity-item activity-item--${activity.tip || 'altele'}${activity.bifat ? ' done' : ''}`}
+              >
                 {editingActivityId === activity.id ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
                     <input
                       type="text"
                       value={editActivity.titlu_activitate}
@@ -195,51 +197,49 @@ function TripCard({ trip, onRefresh }) {
                       />
                     </div>
                     <textarea
-                      placeholder="Detalii (adresă, recomandări, rezervare...)"
+                      placeholder="Detalii (adresa, recomandari, rezervare...)"
                       value={editActivity.descriere}
                       onChange={(e) => setEditActivity({ ...editActivity, descriere: e.target.value })}
                       style={{ padding: '6px', fontFamily: 'inherit' }}
                     />
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={() => handleSaveActivity(activity.id)} style={{ padding: '6px', background: '#28A745', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-                        Salvează
+                        Salveaza
                       </button>
                       <button onClick={() => setEditingActivityId(null)} style={{ padding: '6px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer', flex: 1 }}>
-                        Anulează
+                        Anuleaza
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                      <input type="checkbox" checked={!!activity.bifat} onChange={() => handleToggleBifat(activity)} style={{ marginTop: '4px' }} />
+                  <>
+                    <div className="activity-main">
+                      <input
+                        type="checkbox"
+                        className="activity-checkbox"
+                        checked={!!activity.bifat}
+                        onChange={() => handleToggleBifat(activity)}
+                      />
                       <div>
-                        <div style={{ textDecoration: activity.bifat ? 'line-through' : 'none', color: activity.bifat ? '#999' : '#c3d39d' }}>
-                          <span style={{ fontSize: '13px', color: '#666', marginRight: '6px' }}>
-                            {activity.ora ? `⏰ ${activity.ora.slice(0, 5)}` : '🕒 Oricând'}
-                          </span>
-                          <strong>{activity.titlu_activitate}</strong>
-                          <span style={{ fontSize: '12px', color: '#888', marginLeft: '6px' }}>{TIP_LABELS[activity.tip] || TIP_LABELS.altele}</span>
+                        <div>
+                          <span className="activity-time">{activity.ora ? `⏰ ${activity.ora.slice(0, 5)}` : '🕒 Oricand'}</span>
+                          <span className={`activity-title${activity.bifat ? ' done' : ''}`}>{activity.titlu_activitate}</span>
+                          <span className={`activity-badge activity-badge--${activity.tip || 'altele'}`}>{TIP_LABELS[activity.tip] || TIP_LABELS.altele}</span>
                         </div>
-                        {activity.descriere && <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#666' }}>{activity.descriere}</p>}
+                        {activity.descriere && <p className="activity-desc">{activity.descriere}</p>}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <button onClick={() => startEditActivity(activity)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}>
-                        ✏️
-                      </button>
-                      <button onClick={() => handleDeleteActivity(activity.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}>
-                        🗑️
-                      </button>
+                    <div className="activity-actions">
+                      <button onClick={() => startEditActivity(activity)}>✏️</button>
+                      <button onClick={() => handleDeleteActivity(activity.id)}>🗑️</button>
                     </div>
-                  </div>
+                  </>
                 )}
               </li>
             ))}
           </ul>
         )}
 
-        {/* formular adaugare activitate noua */}
         <form onSubmit={handleAddActivity} style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
           <input
             type="text"
@@ -254,7 +254,7 @@ function TripCard({ trip, onRefresh }) {
               <option value="gastronomie">🍽️ Gastronomie</option>
               <option value="altele">📌 Altele</option>
             </select>
-            <input type="time" value={newOra} onChange={(e) => setNewOra(e.target.value)} style={{ padding: '6px' }} title="Lasă gol pentru program flexibil" />
+            <input type="time" value={newOra} onChange={(e) => setNewOra(e.target.value)} style={{ padding: '6px' }} title="Lasa gol pentru program flexibil" />
           </div>
           <textarea
             placeholder="Detalii (adresa, recomandari, rezervare...) - optional"
@@ -263,7 +263,7 @@ function TripCard({ trip, onRefresh }) {
             style={{ padding: '6px', fontFamily: 'inherit' }}
           />
           <button type="submit" style={{ padding: '8px', background: '#007BFF', color: 'white', border: 'none', cursor: 'pointer' }}>
-            + Adaugă în plan
+            + Adauga in plan
           </button>
         </form>
       </div>
