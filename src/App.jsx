@@ -1,15 +1,32 @@
 import { useState, useEffect } from 'react';
 import api from './api';
+import Auth from './Auth';
 import TripCard from './TripCard';
 import HotelSearch from './HotelSearch';
 import './App.css';
 
 function App() {
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
   const [trips, setTrips] = useState([]);
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [search, setSearch] = useState('');
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/logout');
+    } catch (error) {
+      console.error("Eroare la delogare:", error);
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setTrips([]);
+  };
 
   const fetchTrips = async () => {
     try {
@@ -21,8 +38,10 @@ function App() {
   };
 
   useEffect(() => {
-    fetchTrips();
-  }, []);
+    if (user) {
+      fetchTrips();
+    }
+  }, [user]);
 
   const filteredTrips = trips.filter((trip) =>
       trip.numit_destinatie.toLowerCase().includes(search.toLowerCase())
@@ -48,9 +67,21 @@ function App() {
     }
   };
 
+  if (!user) {
+    return <Auth onLogin={setUser} />;
+  }
+
   return (
       <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', textAlign: 'left' }}>
-        <h1 style={{ textAlign: 'center' }}>Planificator de Calatorii</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1>Planificator de Calatorii</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span>{user.name}</span>
+            <button onClick={handleLogout} style={{ padding: '8px 16px', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer' }}>
+              Delogare
+            </button>
+          </div>
+        </div>
 
         <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 340px', minWidth: '300px' }}>
@@ -99,7 +130,7 @@ function App() {
                 <p>{trips.length === 0 ? 'Nu ai adaugat nicio calatorie inca.' : 'Nicio calatorie nu corespunde cautarii.'}</p>
             ) : (
                 <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {filteredTrips.map((trip) => (
+                  {filteredTrips.map((trip) =oare> (
                       <TripCard key={trip.id} trip={trip} onRefresh={fetchTrips} />
                   ))}
                 </ul>
