@@ -63,7 +63,7 @@ function Users() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="activity-badge">Conectat</span>
             <button onClick={() => handleInvite(user.id)} style={{ padding: '6px 12px', background: '#007BFF', color: 'white', border: 'none', cursor: 'pointer' }}>
-              Invita sa-mi vada planurile
+              Partajeaza planurile
             </button>
           </div>
       );
