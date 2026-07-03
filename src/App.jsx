@@ -3,6 +3,8 @@ import api from './api';
 import Auth from './Auth';
 import TripCard from './TripCard';
 import HotelSearch from './HotelSearch';
+import Users from './Users';
+import SharedWithMe from './SharedWithMe';
 import './App.css';
 
 function App() {
@@ -10,6 +12,7 @@ function App() {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
   });
+  const [page, setPage] = useState('trips');
   const [trips, setTrips] = useState([]);
   const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -83,6 +86,31 @@ function App() {
           </div>
         </div>
 
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border)', marginBottom: '20px' }}>
+          <button
+              onClick={() => setPage('trips')}
+              style={{ padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', borderBottom: page === 'trips' ? '2px solid #007BFF' : '2px solid transparent', fontWeight: page === 'trips' ? 'bold' : 'normal' }}
+          >
+            Calatorii
+          </button>
+          <button
+              onClick={() => setPage('users')}
+              style={{ padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', borderBottom: page === 'users' ? '2px solid #007BFF' : '2px solid transparent', fontWeight: page === 'users' ? 'bold' : 'normal' }}
+          >
+            Useri
+          </button>
+          <button
+              onClick={() => setPage('shared')}
+              style={{ padding: '10px 16px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', borderBottom: page === 'shared' ? '2px solid #007BFF' : '2px solid transparent', fontWeight: page === 'shared' ? 'bold' : 'normal' }}
+          >
+            Partajat cu mine
+          </button>
+        </div>
+
+        {page === 'users' && <Users />}
+        {page === 'shared' && <SharedWithMe />}
+
+        {page === 'trips' && (
         <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 340px', minWidth: '300px' }}>
             <h2>Adauga o calatorie</h2>
@@ -137,6 +165,7 @@ function App() {
             )}
           </div>
         </div>
+        )}
       </div>
   );
 }
