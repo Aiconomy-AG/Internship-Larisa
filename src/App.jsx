@@ -130,7 +130,7 @@ function App() {
                 <p>{trips.length === 0 ? 'Nu ai adaugat nicio calatorie inca.' : 'Nicio calatorie nu corespunde cautarii.'}</p>
             ) : (
                 <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {filteredTrips.map((trip) => (
+                  {filteredTrips.map((trip) =oare> (
                       <TripCard key={trip.id} trip={trip} onRefresh={fetchTrips} />
                   ))}
                 </ul>
