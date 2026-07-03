@@ -49,56 +49,63 @@ function App() {
   };
 
   return (
-      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '0 auto' }}>
-        <h1>Planificator de Calatorii</h1>
+      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', textAlign: 'left' }}>
+        <h1 style={{ textAlign: 'center' }}>Planificator de Calatorii</h1>
 
-        <form onSubmit={handleSubmit} style={{ marginBottom: '30px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <input
-              type="text"
-              placeholder="Destinatie (ex: Grecia, Roma...)"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              style={{ padding: '8px', fontSize: '16px' }}
-          />
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                style={{ padding: '8px', flex: 1 }}
-            />
-            <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                style={{ padding: '8px', flex: 1 }}
-            />
+        <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 340px', minWidth: '300px' }}>
+            <h2>Adauga o calatorie</h2>
+            <form onSubmit={handleSubmit} style={{ marginBottom: '30px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <input
+                  type="text"
+                  placeholder="Destinatie (ex: Grecia, Roma...)"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  style={{ padding: '8px', fontSize: '16px' }}
+              />
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    style={{ padding: '8px', flex: 1 }}
+                />
+                <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    style={{ padding: '8px', flex: 1 }}
+                />
+              </div>
+              <button type="submit" style={{ padding: '10px', background: '#007BFF', color: 'white', border: 'none', cursor: 'pointer', fontSize: '16px' }}>
+                Adauga Calatorie
+              </button>
+            </form>
+
+            <HotelSearch />
           </div>
-          <button type="submit" style={{ padding: '10px', background: '#007BFF', color: 'white', border: 'none', cursor: 'pointer', fontSize: '16px' }}>
-            Adauga Calatorie
-          </button>
-        </form>
 
-        <input
-            type="text"
-            placeholder="Cauta o destinatie..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', marginBottom: '20px' }}
-        />
+          <div style={{ flex: '1 1 380px', minWidth: '300px' }}>
+            <h2>Vacantele mele</h2>
+            <input
+                type="text"
+                placeholder="Cauta o destinatie..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ padding: '8px', fontSize: '16px', width: '100%', boxSizing: 'border-box', marginBottom: '20px' }}
+            />
 
-        <h2>Vacantele mele:</h2>
-        {filteredTrips.length === 0 ? (
-            <p>{trips.length === 0 ? 'Nu ai adaugat nicio calatorie inca.' : 'Nicio calatorie nu corespunde cautarii.'}</p>
-        ) : (
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {filteredTrips.map((trip) => (
-                  <TripCard key={trip.id} trip={trip} onRefresh={fetchTrips} />
-              ))}
-            </ul>
-        )}
-
-        <HotelSearch />
+            {filteredTrips.length === 0 ? (
+                <p>{trips.length === 0 ? 'Nu ai adaugat nicio calatorie inca.' : 'Nicio calatorie nu corespunde cautarii.'}</p>
+            ) : (
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                  {filteredTrips.map((trip) => (
+                      <TripCard key={trip.id} trip={trip} onRefresh={fetchTrips} />
+                  ))}
+                </ul>
+            )}
+          </div>
+        </div>
       </div>
   );
 }
