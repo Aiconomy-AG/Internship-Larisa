@@ -35,7 +35,7 @@ function SharedWithMe() {
       const response = await api.get(`/shares/${ownerId}/trips`);
       setSharedData(response.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Nu ai (mai) acces la aceste planuri.');
+      setError(err.response?.data?.message || 'Nu ai acces la aceste planuri.');
       fetchShares();
     }
   };
